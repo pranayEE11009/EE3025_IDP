@@ -1,57 +1,56 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-N=200 
-x=np.array([1,2,3,4,2,1])
-
-#DFT of x[n]
-X = np.zeros(N) + 1j*np.zeros(N)
-for k in range(N):
-    for n in range(6):
-            X[k]+=x[n]*np.exp(-1j*2*np.pi*k*n/N)
+N=6
+x=np.array([[1],[2],[3],[4],[2],[1]])
 
 #defining h[n]
-h=np.zeros(12)
+h=np.zeros(N)
 h[0]=1
 h[1]=(-1/2)*h[0]
 h[2]=1-(1/2)*h[1]
-for i in range(3,12):
+for i in range(3,N):
     h[i]=(-1/2)*h[i-1]
 
-#DFT of h[n]
-H=np.zeros(N) + 1j*np.zeros(N)
-for k in range(N):
-    for n in range(N):
-        if n<12:
-            H[k]+=h[n]*np.exp(-1j*2*np.pi*k*n/N)
-        else:
-            H[k]+=0
+#DFT function using matrix multiplication
+def DFT(x):
+    n,k=np.meshgrid(np.arange(N),np.arange(N))
+    #here, n and k are NxN matrices where each point gives the x and y coordinates respectiely 
+    # respectively of a grid spaned over the x and y axis with range
+    # 0 to N on each side.    
+    
+    W=np.exp(-1j*2*np.pi*n*k/N)
+    X=W@x
+    return X
 
+
+X=DFT(x)    #DFT of x
+H=DFT(h)    #DFT of h
 
 #plotting
 n=np.linspace(0,N-1,N)
 
-plt.stem(np.linspace(0,5,6),x,use_line_collection='True')
+plt.stem(n,x,use_line_collection='True')
 plt.title('x[n]'); plt.xlabel('n'); plt.ylabel('magnitude')
 plt.show()
-plt.stem(np.linspace(0,11,12),h,use_line_collection='True')
+plt.stem(n,h,use_line_collection='True')
 plt.title('h[n]'); plt.xlabel('n'); plt.ylabel('magnitude')
 plt.show()
 
-plt.plot(n,abs(X))
+plt.stem(n,abs(X),use_line_collection='True')
 plt.title('$\mid X[k]\mid $') ; plt.xlabel('k') ; plt.ylabel('amplitude')
 plt.grid()
 plt.show()
-plt.plot(n,np.angle(X,deg=True))
+plt.stem(n,np.angle(X,deg=True),use_line_collection='True')
 plt.title(r'$ \angle{X[k]}$'); plt.xlabel('k'); plt.ylabel('phase in degrees')
 plt.grid()
 plt.show()
 
-plt.plot(n,abs(H))
+plt.stem(n,abs(H),use_line_collection='True')
 plt.title('$\mid H[k] \mid $'); plt.xlabel('k'); plt.ylabel('amplitude')
 plt.grid()
 plt.show()
-plt.plot(n,np.angle(H,deg=True))
+plt.stem(n,np.angle(H,deg=True),use_line_collection='True')
 plt.title(r'$\angle{H[k]}$'); plt.xlabel('k'); plt.ylabel('phase in degrees')
 plt.grid()
 plt.show()
